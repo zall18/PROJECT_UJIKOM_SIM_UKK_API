@@ -10,18 +10,33 @@ class CompetencyStandardController extends Controller
 {
     public function assessorCompetency(Request $request)
     {
-        return response()->json([
-            'competency' => CompetencyStandard::where('id', $request->user()->assessor->id)->get(),
-        ]);
+        if ($request->user()->role == "assessor") {
+            return response()->json([
+                'competency' => CompetencyStandard::where('id', $request->user()->assessor->id)->get(),
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'This is route for assessor'
+            ], 404);
+        }
+
     }
 
     public function assessorCompetitor(Request $request)
     {
         $competency = CompetencyStandard::where('id', $request->id)->first();
 
-        return response()->json([
-            'competitor' => Student::where('major_id', $competency->major_id)->with('user')->get(),
+        if ($request->user()->role == "assessor") {
+            return response()->json([
+                'competitor' => Student::where('major_id', $competency->major_id)->with('user')->get(),
 
-        ]);
+            ]);
+        }else{
+            return response()->json([
+                'message' => 'This is route for assessor'
+            ], 404);
+        }
+
+
     }
 }
