@@ -12,7 +12,7 @@ class CompetencyStandardController extends Controller
     {
         if ($request->user()->role == "assessor") {
             return response()->json([
-                'competency' => CompetencyStandard::where('id', $request->user()->assessor->id)->get(),
+                'competency' => CompetencyStandard::where('assessor_id', $request->user()->assessor->id)->get(),
             ]);
         }else{
             return response()->json([
