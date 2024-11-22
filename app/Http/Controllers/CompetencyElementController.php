@@ -19,7 +19,7 @@ class CompetencyElementController extends Controller
             $data['standard'] = CompetencyStandard::where('id', $request->id)->first();
             $data['active'] = 'examResultReport';
 
-            $standard = CompetencyStandard::where('assessor_id', $request->user()->assessor->id)
+            $standard = CompetencyStandard::where('id', $request->id)
                 ->withCount('competency_elements')
                 ->first();
 
@@ -36,6 +36,8 @@ class CompetencyElementController extends Controller
             $elementsStatus = $standard->competency_elements->sortBy('code')->map(function ($element) use ($exams) {
                 $exam = $exams->firstWhere('element_id', $element->id);
                 return [
+                    'element_id' => $element->id,
+                    'element' => $element->criteria,
                     'status' => $exam ? ($exam->status == 1 ? 'Kompeten' : 'Belum Kompeten') : 'Belum Dinilai',
                     'comments' => $exam ? $exam->comments : '-'
                 ];

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompetencyElement;
 use App\Models\CompetencyStandard;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -38,5 +39,12 @@ class CompetencyStandardController extends Controller
         }
 
 
+    }
+
+    public function element(Request $request)
+    {
+        return response()->json([
+            'elements' => CompetencyElement::where('competency_standard_id', $request->id)->get(),
+        ]);
     }
 }

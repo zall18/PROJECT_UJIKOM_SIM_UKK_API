@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompetencyElementController;
 use App\Http\Controllers\CompetencyStandardController;
+use App\Http\Controllers\ExaminationController;
 use App\Http\Controllers\UserController;
 use App\Models\CompetencyElement;
 use App\Models\CompetencyStandard;
@@ -36,4 +37,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/assessor/competency/{id}/student', [CompetencyStandardController::class, 'assessorCompetitor']);
     Route::get('/assessor/competency/{id}/student/{student_id}', [CompetencyElementController::class, 'examAndStatus']);
     Route::post('/assessor/competency/element/{element_id}/student/{student_id}', [CompetencyElementController::class, 'gradingExam']);
+    Route::get('/assessor/competency-standard/{id}', [CompetencyStandardController::class, 'element']);
+    Route::get('/assessor/exam-result/{id}', [ExaminationController::class, 'result']);
 });
