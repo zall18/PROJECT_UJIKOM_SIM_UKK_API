@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\CompetencyStandard;
 use App\Models\Examination;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class StudentController extends Controller
 {
-    public function dashboard(Request $request){
+    public function dashboard(Request $request)
+    {
 
         // Ambil student yang sedang login
         $student = Auth::user()->student;
@@ -51,27 +53,28 @@ class StudentController extends Controller
 
         return response()->json([
             'notCompetentCount' => $notCompetentCount,
-            'standardsCount' => $standards->count() - $notCompetentCount,
+            'standardsCount' => $standards->count(),
             'user' => $request->user()
         ]);
 
     }
 
-    private function conversi($grade){
-        if ($grade >= 100 && $grade <= 91) {
+    private function conversi($grade)
+    {
+        if ($grade >= 91 && $grade <= 100) {
             return 'Very Competent';
-        }else if($grade >= 90 && $grade <= 75){
-            return 'Competen';
-        }else if($grade >= 61 && $grade <= 74){
+        } else if ($grade >= 75 && $grade <= 90) {
+            return 'Competent';
+        } else if ($grade >= 61 && $grade <= 74) {
             return 'Quite Competent';
-        }else if($grade > 60){
+        } else if ($grade <= 60) {
             return 'Not Competent';
         }
     }
 
     public function resultStudent(Request $request)
     {
-       // Ambil student yang sedang login
+        // Ambil student yang sedang login
         $student = Auth::user()->student;
 
         // Ambil semua competency standard berdasarkan jurusan student
@@ -107,5 +110,12 @@ class StudentController extends Controller
         return response()->json([
             'statusSummary' => $statusSummary
         ]);
+    }
+
+    public function studentProfile(Request $request)
+    {
+        $id = $request->user()->id;
+        $student = Student::where('user_id', $id)->with(['user', 'major'])->first();
+        return $student;
     }
 }

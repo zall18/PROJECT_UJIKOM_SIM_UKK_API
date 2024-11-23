@@ -8,6 +8,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use App\Models\CompetencyElement;
 use App\Models\CompetencyStandard;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,7 +31,9 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', function (Request $request) {
-        return $request->user();
+        $id = $request->user()->id;
+        $student = User::where('id', $id)->with(['student', 'assessor'])->first();
+        return $student;
     });
     Route::get('/auth/logout', [AuthController::class, 'logout']);
     Route::get('/assessor/home', [UserController::class, 'assessorHome']);
@@ -42,5 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/assessor/exam-result/{id}', [ExaminationController::class, 'result']);
 
     Route::get('/student/home', [StudentController::class, 'dashboard']);
-    Route::get('/student/exam-result', [StudentController::class, 'resultStudent']);  
+    Route::get('/student/exam-result', [StudentController::class, 'resultStudent']);
+    Route::get('/student/profile', [StudentController::class, 'studentProfile']);
 });
