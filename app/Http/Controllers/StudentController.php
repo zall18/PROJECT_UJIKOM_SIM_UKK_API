@@ -32,7 +32,7 @@ class StudentController extends Controller
             // Hitung nilai akhir
             $finalScore = $totalElements > 0 ? round(($completedElements / $totalElements) * 100) : 0;
             // Tentukan status
-            $status = $finalScore >= 90 ? 'Competent' : 'Not Competent';
+            $status = $this->conversi($finalScore);
             return [
                 'unit_title' => $standard->unit_title,
                 'status' => $status,
