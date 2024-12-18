@@ -22,21 +22,17 @@ class UserController extends Controller
             $data['students'] = $examinations->groupBy('student_id')->map(function ($exams) use ($standard) {
                 $totalElements = $standard->competency_elements_count;
                 $completedElements = $exams->where('status', 1)->count(); // Menghitung elemen yang statusnya kompeten
-                $finalScore = round(($completedElements / $totalElements) * 100);
-                $status = $finalScore >= 75 ? 'Competent' : 'Not Competent';
-                $elementsStatus = $standard->competency_elements->sortBy('code')->map(function ($element) use ($exams) {
-                    $exam = $exams->firstWhere('element_id', $element->id);
-                    return [
-                        'status' => $exam ? ($exam->status == 1 ? 'Kompeten' : 'Belum Kompeten') : 'Belum Dinilai',
-                        'comments' => $exam ? $exam->comments : '-'
-                    ];
-                });
+                $finalScore = $totalElements > 0 ? round(($completedElements / $totalElements) * 100) : 0;
                 return [
                     'final_score' => $finalScore,
                 ];
             });
+
             $finalScores = $data['students']->pluck('final_score');
-            $avg = $finalScores->avg() ?? 0;
+            // dd($finalScores);
+            // Log::info('Final Scores:', $finalScores->toArray()); // Debugging log
+            $avg = $finalScores->isNotEmpty() ? $finalScores->avg() : 0;
+
             return response()->json([
                 'user' => $request->user(),
                 'competency_count' => CompetencyStandard::where('assessor_id', $request->user()->assessor->id)->count(),
@@ -44,6 +40,7 @@ class UserController extends Controller
                 'avg_last_score' => $avg,
                 'student_active' => Student::all()->count()
             ]);
+
         }else{
             return response()->json([
                 'message' => 'This is route for assessor'
